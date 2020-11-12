@@ -1,56 +1,29 @@
-from math import ceil
+from Helping import *
 
-import cv2
-import numpy as np
-from PIL import Image
-
-noisyPath = 'res/moonNoisy{}.gif'
-originalPath = 'res/moonOriginal.gif'
-imageCount = 10
+NOISY_PATH = 'res/moonNoisy{}.gif'
+ORIGINAL_PATH = 'res/moonOriginal.gif'
+FRAME_COUNT = 10
 
 
-def readGIF(path: str):
-    gif = cv2.VideoCapture(path)
-    ret, frame = gif.read()
-    img = Image.fromarray(frame)
-    open_cv_image = np.array(img, dtype='float64')
-    open_cv_image = open_cv_image[:, :, ::-1].copy()
-    return open_cv_image[:, :, 0]
+def reduce_noise(frames: np.ndarray, count: int):
+    noise_reduced = frames[:count].mean(axis=0)
+    print(f'Using {count} noisy frames PSNR = {PSNR(noise_reduced, original_image).round(2)}')
+    cv2.imwrite(f'out/noise_reduced_{count}.png', noise_reduced)
+    return noise_reduced
 
 
-def mean(images: np.ndarray):
-    return images.mean(axis=0)
+original_image = read_GIF(ORIGINAL_PATH)
+height, width = original_image.shape
 
+frames = np.ndarray((FRAME_COUNT, height, width))
+for i in range(0, FRAME_COUNT):
+    frames[i] = read_GIF(NOISY_PATH.format(i + 1))
 
-def median(images: np.ndarray):
-    return np.median(images, axis=0)
+results = (original_image,)
+results += (reduce_noise(frames, 7),)
+results += (reduce_noise(frames, 5),)
+results += (reduce_noise(frames, 3),)
 
-
-def percentile(images: np.ndarray, percent: int):
-    images.sort(axis=0)
-    return (images[ceil(percent / images.shape[0]) - 1])
-
-
-def compare(image1: np.ndarray, image2: np.ndarray):
-    # return cv2.PSNR(image1, image2)
-    height, width = image1.shape
-    differenceImage = image2 - image1
-    differenceImage **= 2
-    difference = differenceImage.sum().sum()
-    PSNR = 10 * np.log10(((255 ** 5) * height * width) / difference)
-    return PSNR
-
-
-images = np.ndarray((imageCount, 538, 464))
-for i in range(0, imageCount):
-    images[i - 1] = readGIF(noisyPath.format(i + 1))
-
-# noiseReduced = mean(images)
-noiseReduced = median(images)
-# noiseReduced = percentile(images, 40)
-
-cv2.imwrite('out.png', noiseReduced)
-
-og = readGIF(originalPath)
-print('PSNR = {}'.format(compare(noiseReduced, og)))
-print('OpenCV PSNR = {}'.format(cv2.PSNR(noiseReduced, og)))
+concatenated = np.concatenate(results, axis=1).astype('uint8')
+cv2.imshow('image', concatenated)
+cv2.waitKey()
