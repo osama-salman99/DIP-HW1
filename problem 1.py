@@ -15,7 +15,7 @@ def part_A(image: np.ndarray):
 
 def part_B(image: np.ndarray):
     invLog_img = image - image.min()
-    c = c_power(invLog_img)
+    c = c_inverse_log(invLog_img)
     invLog_img = (10 ** (c * invLog_img)) - 1
     return invLog_img, 'Inverse Log Transformation'
 

@@ -47,7 +47,7 @@ def c_log(image: np.ndarray):
     return 255 / np.log10(1 + mx)
 
 
-def c_power(image: np.ndarray):
+def c_inverse_log(image: np.ndarray):
     # noinspection PyArgumentList
     mx = image.max()
     return np.log10(1 + 255) / mx
