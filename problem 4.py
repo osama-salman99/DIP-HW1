@@ -15,14 +15,14 @@ def hist_eq(image: np.ndarray):
 
 
 def process(image: np.ndarray, label: str):
-    plt.hist(image.ravel(), 256, [0, 256])
+    plt.hist(image.ravel(), 256, [0, 256], label=label)
     plt.show()
     hist_eq_image = hist_eq(image).astype('uint8')
     cv2.imwrite(f'out/{label}_equalized.png', hist_eq_image)
     cv2.imshow(label, hist_eq_image)
     cv2.waitKey()
     cv2.destroyWindow(label)
-    plt.hist(hist_eq_image.ravel(), 256, [0, 256])
+    plt.hist(hist_eq_image.ravel(), 256, [0, 256], label=f'{label}_equalized')
     plt.show()
     print(f'absolute difference in mean in {label}:', abs(image.mean() - hist_eq_image.mean()).round(2))
 
