@@ -1,16 +1,18 @@
 from Helping import *
 
+L = 256
+
 
 def hist_eq(image: np.ndarray):
     height, width = image.shape
     values, freq = np.unique(image, return_counts=True)
     cum_sum = np.cumsum(freq)
+    # maps each value to its new value depending on its cum_sum
     replace = dict(zip(values, (cum_sum * ((L - 1) / (height * width)))))
     image = np.vectorize(replace.get)(image)
     return image
 
 
-L = 256
 clock = read_GIF("res/clock.gif")
 moonOriginal = read_GIF("res/moonOriginal.gif")
 toys = read_GIF("res/toys.GIF")
