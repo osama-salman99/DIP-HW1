@@ -15,6 +15,8 @@ def hist_eq(image: np.ndarray):
 
 
 def process(image: np.ndarray, label: str):
+    plt.hist(image.ravel(), 256, [0, 256])
+    plt.show()
     hist_eq_image = hist_eq(image).astype('uint8')
     cv2.imwrite(f'out/{label}_equalized.png', hist_eq_image)
     cv2.imshow(label, hist_eq_image)
@@ -22,6 +24,7 @@ def process(image: np.ndarray, label: str):
     cv2.destroyWindow(label)
     plt.hist(hist_eq_image.ravel(), 256, [0, 256])
     plt.show()
+    print(f'absolute difference in mean in {label}:', abs(image.mean() - hist_eq_image.mean()).round(2))
 
 
 clock = read_GIF("res/clock.gif")
