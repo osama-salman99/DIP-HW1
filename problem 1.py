@@ -10,14 +10,13 @@ def part_A(image: np.ndarray):
     c = c_log(log_img)
     log_img += 1
     log_img = c * (np.log10(log_img))
-    log_img = np.array(log_img)
     return log_img, 'Log Transformation'
 
 
 def part_B(image: np.ndarray):
     invLog_img = image - image.min()
     c = c_power(invLog_img)
-    invLog_img = np.array((10 ** (c * invLog_img)) - 1)
+    invLog_img = (10 ** (c * invLog_img)) - 1
     return invLog_img, 'Inverse Log Transformation'
 
 
