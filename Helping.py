@@ -8,12 +8,11 @@ def read_GIF(path: str):
         return cv2.imread(path)[:, :, 0].astype('float64')
     gif = cv2.VideoCapture(path)
     if gif is None:
-        print('path is empty')
         return None
     ret, frame = gif.read()
     img = Image.fromarray(frame)
     open_cv_image = np.array(img, dtype='float64')
-    open_cv_image = open_cv_image[:, :, ::-1].copy()
+    open_cv_image = open_cv_image[:, :, ::-1]
     return open_cv_image[:, :, 0]
 
 
